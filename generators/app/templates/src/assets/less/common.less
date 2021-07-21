@@ -1,0 +1,407 @@
+html,body,#app{
+  height: 100%;
+}
+
+
+#app{
+  margin-top: 0!important;
+}
+// 基础颜色
+@deepBlue:#4285f4;
+
+@lightBlue:#379CF8;
+
+.blueButton{
+  background-color: @deepBlue;
+  color: #fff;
+}
+// 颜色
+.c-333{
+  color: #333;
+}
+
+.c-666{
+  color: #666;
+}
+.c-999{
+  color: #999;
+}
+
+.c-aaa{
+  color: #aaa;
+}
+.c-ccc{
+  color: #ccc;
+}
+.c-eee{
+  color: #eee;
+}
+.c-fff{
+  color: #fff;
+}
+.c-blue{
+  color: #4285F4;
+}
+
+.c-red{
+  color: #ee1e1e;
+  &:hover{
+    color: #ee1e1e!important;
+  }
+}
+
+.c-D65050{
+  color: #D65050;
+}
+
+// 背景色
+.bg-white{
+  background-color: #fff;
+}
+
+// 盒模型
+.pr20{
+  padding-right: 20px;
+}
+
+.pt5{
+  padding-top: 5px;
+}
+
+.pb20{
+  padding-bottom: 20px;
+}
+
+.pdbt24{
+  padding: 24px 0px;
+}
+
+.br{
+  border-right: 1px solid #D8D8D8;
+}
+
+.mb5{
+  margin-bottom:5px
+}
+
+.mb8{
+  margin-bottom:8px
+}
+
+.mb10{
+  margin-bottom: 10px;
+}
+
+.mr5{
+  margin-right: 5px;
+}
+
+.mr10{
+  margin-right: 10px;
+}
+
+.mr30{
+  margin-right: 30px;
+}
+
+.mr34{
+  margin-right: 34px;
+}
+
+
+.ml5{
+  margin-left: 5px;
+}
+
+.ml35{
+  margin-left: 35px;
+}
+
+.mr40{
+  margin-right: 40px;
+}
+
+.mb30{
+  margin-bottom: 30px;
+}
+
+.ml30{
+  margin-left: 30px;
+}
+
+.mt10{
+  margin-top: 10px;
+}
+
+.pr15{
+  padding-right: 15px;
+}
+
+.pb15{
+  padding-bottom: 15px;
+}
+
+.pb30{
+
+  padding-bottom: 30px;
+
+}
+
+.pd20{
+  padding: 20px;
+}
+
+.pd24{
+  padding: 24px;
+}
+
+.pdbt20{
+  padding: 20px 0;
+}
+
+.pr10{
+  padding-right: 10px;
+}
+
+.pl10{
+  padding-left: 10px;
+}
+
+.pl12{
+  padding-left: 12px;
+}
+
+.flex{
+  display:flex;
+  align-items: center;
+}
+
+.el-container {
+  height:100%;
+}
+
+
+// 浮动
+
+.fl{
+  float:left;
+}
+
+.fr{
+  float:right;
+}
+
+.clearfix:before,
+.clearfix:after {
+    display: table;
+    content: " ";
+}
+.clearfix:after {
+    display:block;clear:both;content:'';visibility:hidden;height:0;
+}
+.clearfix{
+    *zoom: 1;
+}
+
+.t-center{
+  text-align: center;
+}
+
+.t-right{
+  text-align: right;
+}
+
+.t-left{
+  text-align: left;
+}
+
+.dn{
+  display:none;
+}
+
+.grayBg{
+  background-color: #F2F2F2;
+}
+
+.b-blue{
+  background-color: #1890ff;
+}
+
+body{
+  font-size: 14px!important;
+}
+
+//  项目定制样式
+.mainContent{
+  height: 100%;
+  padding:0 30px;
+  background-color: #fff;
+  margin: 20px;
+  min-height: 700px;
+}
+
+.el-table th{
+  background-color: #f2f4fb;
+}
+
+.el-pagination{
+  margin-top: 30px;
+}
+
+
+.searchInput{
+
+  border-radius: 4px;
+  width: 250px;
+  height: 32px;
+
+}
+
+.el-input{
+  height: 32px!important;
+  line-height: 32px!important;
+}
+
+
+.el-input__inner{
+  height: 32px!important;
+  line-height: 32px!important;
+}
+
+
+.searchInput /deep/ .el-input__prefix, .searchInput /deep/ .el-input__suffix{
+   top: -2px;
+}
+
+
+.el-dialog__body{
+
+  padding: 30px;
+
+  .el-select{
+      width: 100%!important;
+  }
+
+
+}
+
+.el-button{
+  padding: 8px 20px;
+  min-width: 80px;
+}
+
+.el-dialog__footer{
+
+  .el-button{
+    padding: 8px 20px;
+    min-width: 80px;
+  }
+  
+  .el-button--default{
+    border: none;
+    background: #fff;
+  }
+
+}
+
+.el-dialog__header{
+  border-bottom: 1px solid #e9e9e9;
+  text-align: left;
+}
+
+.el-form-item {
+  margin-bottom: 10px;
+  .el-input{
+    height: 32px;
+    line-height: 32px;
+  }
+}
+
+
+
+.opt{
+
+  display:inline-block;
+  min-width: 40px;
+  text-align: left;
+  padding: 5px 0;
+  &:hover{
+    color: #4285F4;
+    cursor: pointer;
+  }
+}
+
+.colorLabel{
+  color: #8c8c8c;
+  margin-right: 10px;
+  min-width: 50px;
+}
+
+.colorLabel /deep/ .el-form-item__label{
+  color: #8c8c8c!important;
+}
+
+// 全局更改弹窗
+
+.el-dialog{
+  // 居中弹框
+  position:absolute;
+  top:50%;
+  left:50%;
+  margin:0 !important;
+  transform:translate(-50%, -50%);
+  // 防止超出视窗
+  max-height:calc(100% - 30px);
+  max-width:calc(100% - 30px);
+  //实现body内部滚动
+  display:flex;
+  flex-direction:column;
+  .el-dialog__body{
+    overflow:auto
+  }
+}
+
+// 字体图标
+.iconfont{
+  font-family: "iconfont" !important;
+  color: #fff;
+  font-size: 12px;
+  font-style: normal;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+// .el-table td, .el-table th{
+//   width: 20%!important;
+// }
+
+// 省略
+.ellipsis{
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.f12{
+  font-size: 12px;
+}
+
+.f14{
+  font-size: 14px;
+}
+
+.f16{
+  font-size: 16px;
+}
+
+.f18{
+  font-size: 18px;
+}
+
+.f20{
+  font-size: 20px;
+}
+
+.f24{
+  font-size: 24px;
+}
