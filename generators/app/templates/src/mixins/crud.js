@@ -10,9 +10,9 @@ export const initCommonData = {
       // 排序规则，默认 id 降序， 支持多字段排序 ['id,desc', 'createTime,asc']
       sort: ['id,desc'],
       // 页码
-      page_num: 0,
+      pageNum: 1,
       // 每页数据条数
-      page_size: 10,
+      pageSize: 10,
       // 总数据条数
       total: 0,
       // 请求数据的table的url
@@ -68,11 +68,11 @@ export const initCommonData = {
           // time 毫秒后显示表格
           setTimeout(() => {
             this.loading = false
-            this.total = res.data.list ? res.data.total_record : 0
-            this.data = res.data.list ? res.data.list : []
+            this.total = res.data.total ? res.data.total : 0
+            this.data = res.data.results || res.data.list || []
           }, this.time)
 
-          resolve(res.data)
+          resolve(res.data.results)
         }).catch(err => {
           this.loading = false
           reject(err)
@@ -117,19 +117,19 @@ export const initCommonData = {
     },
     getQueryParame: function () {
       return {
-        page_num: this.page_num,
-        page_size: this.page_size,
+        pageNum: this.pageNum,
+        pageSize: this.pageSize,
         ...this.query,
         ...this.params
       }
     },
     pageChange (e) {
-      this.page_num = e - 1
+      this.pageNum = e - 1
       this.init()
     },
     sizeChange (e) {
-      this.page_num = 0
-      this.page_size = e
+      this.pageNum = 0
+      this.pageSize = e
       this.init()
     },
     // 预防删除第二页最后一条数据时，或者多选删除第二页的数据时，页码错误导致请求无数据
@@ -137,13 +137,13 @@ export const initCommonData = {
       if (size === undefined) {
         size = 1
       }
-      if (this.data.length === size && this.page_num !== 0) {
-        this.page_num = this.page_num - 1
+      if (this.data.length === size && this.pageNum !== 0) {
+        this.pageNum = this.pageNum - 1
       }
     },
     // 查询方法
     toQuery () {
-      this.page_num = 0
+      this.pageNum = 0
       this.init()
     },
 
@@ -254,35 +254,39 @@ export const initCommonData = {
      * 多选删除提示
      */
     beforeDelAllMethod () {
+
+    },
+    /**
+     * 多选删除
+     */
+    delAllMethod (idName, submitIdName) {
+      if (!this.beforeDelAllMethod()) {
+        return
+      }
+
       this.$confirm('你确定删除选中的数据吗？', '提示', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
         type: 'warning'
       }).then(() => {
-        this.delAllMethod()
-      })
-    },
-    /**
-     * 多选删除
-     */
-    delAllMethod () {
-      this.delAllLoading = true
-      const data = this.$refs.table.selection
-      const ids = []
-      for (let i = 0; i < data.length; i++) {
-        ids.push(data[i].id)
-      }
-      crudMethod.delAll({url: this.url, serviceNameAddr: this.serviceNameAddr, data: {ids: ids}}).then(() => {
-        this.delAllLoading = false
-        this.dleChangePage(ids.length)
-        this.init()
-        this.$notify({
-          title: '删除成功',
-          type: 'success',
-          duration: 2500
+        this.delAllLoading = true
+        const data = this.$refs.table.selection
+        const ids = []
+        for (let i = 0; i < data.length; i++) {
+          ids.push(data[i][idName])
+        }
+        crudMethod.delAll({url: this.url, serviceNameAddr: this.serviceNameAddr, data: {[submitIdName]: ids}}).then(() => {
+          this.delAllLoading = false
+          this.dleChangePage(ids.length)
+          this.init()
+          this.$notify({
+            title: '删除成功',
+            type: 'success',
+            duration: 2500
+          })
+        }).catch(() => {
+          this.delAllLoading = false
         })
-      }).catch(() => {
-        this.delAllLoading = false
       })
     },
     /**
@@ -301,18 +305,21 @@ export const initCommonData = {
     /**
      * 显示编辑弹窗前可以调用该方法
      */
-    beforeShowEditForm (data) {},
+    beforeShowEditForm (data) {
+
+    },
     /**
      * 显示编辑弹窗
      */
-    showEditFormDialog (data = '') {
+    showEditFormDialog (data = {}) {
+      // if (!this.beforeShowEditForm(data)) {
+      //   return
+      // }
       this.isAdd = false
-      if (data) {
-        this.resetForm = JSON.parse(JSON.stringify(this.form))
-        this.form = JSON.parse(JSON.stringify(data))
-      }
-      this.beforeShowEditForm(data)
       this.dialog = true
+      this.resetForm = JSON.parse(JSON.stringify(this.form))
+      this.form = JSON.parse(JSON.stringify(data))
+      console.log('this.form', this.form)
     },
     /**
      * 新增方法
@@ -422,17 +429,15 @@ export const initCommonData = {
     // 日期搜索
 
     changeDate () {
-    
-      if(this.dateValue){
+      if (this.dateValue) {
         this.query.start_time = new Date(this.dateValue[0]).getTime()
         this.query.end_time = new Date(this.dateValue[1]).getTime()
-       
-    }else {
+      } else {
         this.query.start_time = 0
-        this.query.end_time  = 0
-    }
+        this.query.end_time = 0
+      }
 
-     this.init()
+      this.init()
     }
 
   }

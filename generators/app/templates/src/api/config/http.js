@@ -2,11 +2,12 @@
 import axios from 'axios'
 import router from '@/router/routers.js'
 import store from '../../store'
+import {idKey} from './appIdSecretKey'
 // import {idKey} from './appIdSecretKey'
 
 import Vue from 'vue'
 
-console.log('store', store)
+console.log('store++++++++++++++++', store)
 
 let _this = new Vue()
 // let loadingInstance // loading实例
@@ -60,7 +61,7 @@ const errorHandle = (status, error) => {
   }
   //  状态码判断
   switch (status) {
-    case 400124:
+    case 501:
       _this.$confirm(
         '登录状态已过期，您可以继续留在该页面，或者重新登录',
         '系统提示',
@@ -109,7 +110,7 @@ const errorHandle = (status, error) => {
 }
 
 // 设置post请求头
-service.defaults.headers.post['content-Type'] = 'application/json;charset=UTF-8'
+// service.defaults.headers.post['content-Type'] = 'application/json;charset=UTF-8'
 
 /**
  * 请求拦截器
@@ -117,22 +118,24 @@ service.defaults.headers.post['content-Type'] = 'application/json;charset=UTF-8'
  */
 service.interceptors.request.use(
   config => {
-    // let {requestType = 'tymh', applyID = idKey.admin_Id, secretKey = idKey.admin_SecretKey, userInfo = null, contentType = 'application/json', processData = false, mimeType = 'text/plain'} = config.headers
-    let {contentType = 'application/json', processData = false, mimeType = 'text/plain', cacheControl = 'cache'} = config.headers
+    let {contentType = 'application/json;charset=UTF-8', processData = false, cacheControl = 'no-cache', secretKey = idKey.secretKey, applyID = idKey.applyID, requestType = 'tymh', userInfo = 'null'} = config.headers
 
-    config.headers = {
-
+    let headers = {
       'processData': processData,
       'Content-Type': contentType,
-      'mimeType': mimeType,
-      'Cache-Control': cacheControl
+      'Cache-Control': cacheControl,
+      secretKey,
+      applyID,
+      userInfo,
+      requestType
     }
 
-    if (store.state.user.token) {
+    config.headers = {...headers, ...config.headers}
+    // store.state.user.token = '1d454225ed4b41eb82fdd1f18bf9bf27'
+
+    if (store.state.user.accessToken) {
       // 默认给请求头加上token
-      config.headers['xh-cloud-token'] = store.state.user.token
-      // 默认给所有的data传参加上token
-      // config.data.token = store.gettedrs.token
+      config.headers['accessToken'] = store.state.user.accessToken
     }
 
     // // 处理Content-Type类型不同
@@ -149,8 +152,8 @@ service.interceptors.request.use(
     // }
     // 全局加loading
     // loadingInstance = _this.$loading({
-    //    target: document.querySelector('.el-main'),
-    //   // fullscreen: true
+    //   target: document.querySelector('.el-main'),
+    //   fullscreen: false
     // })
     return config
   },
@@ -172,13 +175,13 @@ service.interceptors.response.use(
     //   loadingInstance.close()
     // })
 
-    if ((res.data.code && res.data.code < 200) || (res.data.code && res.data.code > 300) || (res.data.success && res.data.success === false) || (res.data.errorCode && res.data.errorCode !== 200)) {
+    if ((res.data.code && res.data.code < 200) || (res.data.code && res.data.code > 300) || res.data.success === false || (res.data.errorCode && res.data.errorCode !== 200)) {
       _this.$message({
         message: res.data.result || res.data.errMsg || res.data.msg
       })
       // eslint-disable-next-line prefer-promise-reject-errors
-      errorHandle(res.data.code || res.data.errorCode, res.data.result || res.data.msg)
-      return Promise.reject(res.data.result || res.data.msg || res.data.msg)
+      errorHandle(res.data.code || res.data.errorCode || res.data.errCode, res.data.result || res.data.msg || res.data.errMsg)
+      return Promise.reject(res.data.result || res.data.msg || res.data.errMsg || res.data.success)
       // return Promise.reject('error')
     } else {
       return Promise.resolve(res.data)
@@ -187,13 +190,17 @@ service.interceptors.response.use(
   // 请求失败
   error => {
     // _this.$nextTick(() => { // 以服务的方式调用的 Loading 需要异步关闭
-    //   loadingInstance.close()
+    //   loadingInstance && loadingInstance.close()
     // })
-    let code = 0
-    const { response } = error
-    code = error.response.data.status
-    errorHandle(code, response.data.error)
-    return Promise.reject(response.data.error)
+    try {
+      let code = 0
+      const { response } = error
+      code = error.response.data.status
+      errorHandle(code, response.data.error)
+      return Promise.reject(response.data.error)
+    } catch (error) {
+      console.log('error', error)
+    }
   }
 
 )

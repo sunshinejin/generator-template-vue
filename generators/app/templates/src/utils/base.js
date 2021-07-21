@@ -101,71 +101,19 @@ export default {
       return (+(randomNum + timestamp)).toString(32)
     }
 
-    // 验证cpu
-
-    Vue.prototype.$validateCpu = (params, rule, value, callback) => {
-      value = Number(value)
-
-      if (typeof value === 'number' && !isNaN(value)) {
-        if (value <= 0 || value > 4) {
-          callback(new Error('CPU在 0 至 4之间且不能为0'))
-        } else if (value > Number(params && params.limit_cpu.split('m')[0]) / 1000) {
-          callback(new Error('申请的CPU大小不能超过剩余可分配核数'))
-        } else {
-          callback()
-        }
-      } else {
-        callback(new Error('CPU必须为数字'))
-      }
-    }
-
-    Vue.prototype.$validateMemory = (params, rule, value, callback) => {
-      value = Number(value)
-
-      if (typeof value === 'number' && !isNaN(value)) {
-        if (value <= 0 || value > 8192) {
-          callback(new Error('内存在 0 至 8192之间且不能为0'))
-        } else if (value > Number(params && params.limit_memory.split('Mi')[0])) {
-          callback(new Error('申请的内存大小不能超过剩余可分配内存'))
-        } else {
-          callback()
-        }
-      } else {
-        callback(new Error('内存必须为数字'))
-      }
-    }
-
-    Vue.prototype.$validateReplicas = (params, rule, value, callback) => {
-      value = Number(value)
-
-      if (typeof value === 'number' && !isNaN(value)) {
-        if (value <= 0) {
-          callback(new Error('实例数必须大于0'))
-        } else if (value > Number(params && (params.limit_replicas))) {
-          callback(new Error('申请的实例数目不能超过剩余可用实例数'))
-        } else if (!Number.isInteger(value)) {
-          callback(new Error('申请的实例数必须是整数'))
-        } else {
-          callback()
-        }
-      } else {
-        callback(new Error('实例数必须为数字'))
-      }
-    }
-
     Vue.prototype.$validateTel = (rule, value, callback) => {
       const RegExp = /((\d{11})|^((\d{7,8})|(\d{4}|\d{3})-(\d{7,8})|(\d{4}|\d{3})-(\d{7,8})-(\d{4}|\d{3}|\d{2}|\d{1})|(\d{7,8})-(\d{4}|\d{3}|\d{2}|\d{1}))$)/
 
-      if (RegExp.test(value)) {
-        callback()
-      } else {
+      if (value && !RegExp.test(value)) {
         callback(new Error('电话格式不正确，请检查'))
+      } else {
+        callback()
       }
     }
 
     Vue.prototype.$checkNumber = (rule, value, callback) => {
       let regEn = /^[0-9]\d*$/
-      if (!regEn.test(value)) {
+      if (value && !regEn.test(value)) {
         callback(new Error('请输入正整数'))
       } else {
         callback()
@@ -201,15 +149,35 @@ export default {
       }
     }
 
-    // Rsa加密
-    Vue.prototype.$encryptedData = function (publicKey, data) {
-      // new一个对象
-      let encrypt = new JSEncrypt()
-      // 设置公钥
-      encrypt.setPublicKey(publicKey)
-      // data是要加密的数据
-      let result = encrypt.encryptLong(data)
-      return result
+    Vue.prototype.$checkPassword = (rule, value, callback) => {
+      var regEn = /^(?![A-z0-9]+$)(?![A-z~!@#$%&*()_:=]+$)(?![0-9~!@#$%&*()_:=]+$)([A-z0-9~!@#$%&*()_:=]{8,16})$/
+      if (value.length < 6 || value.length > 16) {
+        callback(new Error('密码长度至少6位,至多16位'))
+      } else if (!regEn.test(value)) {
+        callback(new Error('密码只能由数字、字母和特殊字符组成,特殊字符包含~ ! @ # $ % ^ &  * ( ) _ : = .'))
+      } else {
+        callback()
+      }
+    }
+
+    // // Rsa加密
+    // Vue.prototype.$encryptedData = (publicKey, data) => {
+    //   // new一个对象
+    //   let encrypt = new JSEncrypt()
+    //   // 设置公钥
+    //   encrypt.setPublicKey(publicKey)
+    //   // data是要加密的数据
+    //   let result = encrypt.encryptLong(data)
+    //   return result
+    // }
+
+    Vue.prototype.$checkIdNum = (rule, value, callback) => {
+      const reg = /(^\d{15}$)|(^\d{18}$)|(^\d{17}(\d|X|x)$)/
+      if (value && !reg.test(value)) {
+        return callback(new Error('证件号码不正确'))
+      } else {
+        callback()
+      }
     }
   }
 

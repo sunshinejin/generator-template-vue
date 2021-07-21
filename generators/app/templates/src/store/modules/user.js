@@ -1,79 +1,96 @@
-import login from '../../api/config/api'
+import {login} from '../../api/login.js'
 // import { getToken, setToken, removeToken } from '@/utils/auth'
 // import {JSEncrypt} from 'jsencrypt'
 import * as mutationType from '../mutation-type'
-
+import Vue from 'vue'
+const vue = new Vue()
+console.log('vue.$confirm', vue.$confirm)
 const user = {
   state: {
-    token: '',
+    accessToken: '',
     id: '',
-    loginId: '',
-    loginUserName: '',
-    user_id: '',
-    privilege: '',
-    user_name: '',
-    publicKey: ''
+    userName: '',
+    type: '' // 身份标识，1-管理员 2-普通管理员
   },
   mutations: {
     [mutationType.SET_TOKEN] (state, token) {
-      state.token = token
+      state.accessToken = token
     },
     [mutationType.SAVE_LOGIN_INFO]: (state, status) => {
-      console.log('status', status)
-      state.token = status.token
-      state.privilege = status.privilege
-      state.user_id = status.user_id
-      state.user_name = status.user_name
-    },
-    // 公钥
-    [mutationType.SET_PUBLIC_KEY] (state, key) {
-      state.publicKey = key
-    },
+      state.accessToken = status.accessToken
+      state.id = status.id
+      state.userName = status.userName
+      state.type = status.type
+    }
   },
   actions: {
     // 登录
-    Login ({ dispatch, commit }, userInfo) {
-
+    Login ({ dispatch, commit }, {userName, userPwd}) {
       return new Promise((resolve, reject) => {
-        login.login({
+        login.loginSuccess({
           data: {
-            data:userInfo
+            userName,
+            userPwd
           }
         }).then(res => {
-          // setToken(res.data.loginUserInfo.token)
           // 保存用户信息
-          console.log('userData', res.data)
-          sessionStorage.setItem('userType', res.data.privilege)
+          sessionStorage.setItem('userType', res.data.type)
           commit('SAVE_LOGIN_INFO', res.data)
-          resolve()
+
+          resolve(res.data)
         }).catch(error => {
           reject(error)
         })
       })
     },
     // 校验token是否有效的接口
-    VerifyToken ({ commit }, tokenInfo) {
+    VerifyToken ({ dispatch, commit }, tokenInfo) {
       return new Promise((resolve, reject) => {
-        login.verifyToken({token: tokenInfo.token}).then(res => {
+        login.verifyToken({data: {
+          accessToken: tokenInfo.accessToken
+        }}).then(res => {
           // setUserInfo(res.data, commit)
-          resolve(res.data)
+          resolve(res)
         }).catch(error => {
+          // 跳转到登录页面
+          // debugger
+          if (!error) {
+            vue.$confirm(
+              '登录状态已失效，您可以继续留在该页面，或者重新登录',
+              '系统提示',
+              {
+                confirmButtonText: '重新登录',
+                cancelButtonText: '取消',
+                type: 'warning'
+              }
+            ).then(() => {
+              dispatch('LoginOut', {accessToken: tokenInfo.accessToken}).then(() => {
+                location.reload() // 为了重新实例化vue-router对象 避免bug
+                this.$router.push({path: '/login'})
+              })
+            })
+          }
+
           reject(error)
         })
       })
     },
-    LoginOut ({ commit }) {
+    LoginOut ({ commit }, tokenInfo) {
       return new Promise((resolve, reject) => {
-        login.logOut().then(res => {
+        login.logOut({
+          data: {
+            accessToken: tokenInfo.accessToken,
+            flag: 1
+          }
+        }).then(res => {
           commit(mutationType.SET_TOKEN, '')
-
           resolve(res.data)
         }).catch(error => {
           reject(error)
         })
       })
     }
-    
+
   }
 }
 

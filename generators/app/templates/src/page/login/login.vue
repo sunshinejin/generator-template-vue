@@ -5,7 +5,8 @@
 
     <el-row type="flex" justify="center">
       <el-col :span="6" class="mt70">
-               <div class="tilte">管理平台</div>
+          <!-- <a class="thumbnail" title="查看平台使用指南文档" :href="address">点击</a> -->
+               <div class="tilte">临控人员管理系统</div>
 
                 <el-form ref="loginForm" :model="form" label-width="80px" :rules="loginRules" >
 
@@ -13,8 +14,8 @@
                              <el-input v-model="form.userName"></el-input>
                        </el-form-item>
 
-                      <el-form-item prop="passWord">
-                             <el-input type="password" v-model="form.passWord"></el-input>
+                      <el-form-item prop="userPwd">
+                             <el-input type="password" v-model="form.userPwd"></el-input>
                        </el-form-item>
 
                        <el-form-item>
@@ -26,34 +27,32 @@
 
                 </el-form>
 
-                 <div class="version">版本号：v{{version}}</div>
+                 <!-- <div class="version">版本号：v{{version}}</div> -->
 
       </el-col>
   </el-row>
-
 
 </div>
 
 </template>
 
 <script>
-import config from '../../../package.json'
-
+// import config from '../../../package.json'
+import md5 from 'blueimp-md5'
 export default {
   name: 'login',
   data () {
     return {
-      // address:'./static/pdf/web/viewer.html?file='+encodeURIComponent("星火容器云管理平台使用指南.pdf"),
       form: {
         userName: '',
-        passWord: ''
+        userPwd: ''
       },
       loginRules: {
         userName: [{required: true, trigger: 'blur', message: '用户名不能为空'}],
-        passWord: [{required: true, trigger: 'blur', message: '密码不能为空'}]
+        userPwd: [{required: true, trigger: 'blur', message: '密码不能为空'}]
       },
-      loading: false,
-      version: config.version
+      loading: false
+      // version: config.version
     }
   },
   watch: {
@@ -66,36 +65,30 @@ export default {
   },
   methods: {
     onSubmit (loginForm) {
+      this.loading = true
       this.$refs[loginForm].validate(valid => {
         let user = {
-          user_id: this.form.userName,
-          password: this.form.passWord
+          userName: this.form.userName,
+          userPwd: md5(this.form.userPwd)
         }
-        user = JSON.stringify(user)
-        // RSA加密
-        const publicKey = this.$store.state.user.publicKey
+        // user = JSON.stringify(user)
+        console.log('user', user)
+        this.$store.dispatch('Login', user).then((data) => {
+          this.loading = false
 
-        let encryptUser = this.$encryptedData(publicKey, user)
+          let type = data.type
+          // sessionStorage.setItem('userType')
+          if (type === 1) {
+            this.$router.push({path: '/account'})
+          } else {
+            this.$router.push({path: '/userManage'})
+          }
 
-        if (valid) {
-          this.loading = true
-          this.$store.dispatch('Login', encryptUser).then(() => {
-            this.loading = false
-            this.$message({
-              message: '登录成功！',
-              duration: 1000
-            })
-
-           this.$router.push({path:'index'})
-          }).catch(() => {
-            this.loading = false
-          })
-        } else {
-          console.log('提交报错!!')
-          return false
-        }
+          // this.$router.push({path: '/'})
+        }).catch(() => {
+          this.loading = false
+        })
       })
-      console.log('this.form', this.form)
     },
 
     enterKey (event) {
@@ -104,7 +97,7 @@ export default {
         : event.which
           ? event.which
           : event.charCode
-      if (code == 13) {
+      if (code === 13) {
         this.onSubmit('loginForm')
       }
     },
@@ -118,7 +111,7 @@ export default {
 
   },
   created () {
-   
+    console.log('+++++++')
   },
   mounted () {
     document.addEventListener('keyup', this.enterKey)
@@ -130,7 +123,6 @@ export default {
 </script>
 
 <style scoped lang="less">
-
 
 .loginPage {
   height: 100%;
@@ -176,10 +168,10 @@ export default {
 .el-input /deep/ .el-input__inner:focus{
         border-color: #3771C9;
 }
-.version{
-      text-align: left;
-     margin-left: 80px;
-}
+// .version{
+//       text-align: left;
+//      margin-left: 80px;
+// }
 
 }
 

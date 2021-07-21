@@ -3,6 +3,7 @@ import BasePageHeader from './BasePageHeader.vue'
 import iBreadCrumb from './BaseBreadCrumb.vue'
 import BasePagination from './BasePagination.vue'
 import SearchForm from './SearchForm.vue'
+import UpdatePassword from './UpdatePassword.vue'
 import Vue from 'vue'
 
 // 页面标题
@@ -30,6 +31,11 @@ Vue.component(
 // 搜索栏
 Vue.component(
   'SearchForm',SearchForm
+)
+
+// 修改密码的弹框
+Vue.component(
+  'UpdatePassword',UpdatePassword
 )
 
 

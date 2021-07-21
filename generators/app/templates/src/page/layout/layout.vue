@@ -4,7 +4,7 @@
         <el-header>
 
           <myheader/>
-          
+
         </el-header>
 
         <el-container>
@@ -12,9 +12,9 @@
           <el-aside >
             <sidebarItem/>
           </el-aside>
-          <el-main>
+          <el-main class="el-main">
             <transition name="fade-transform" mode="out-in">
-    
+
                <router-view :key="key" />
 
             </transition>
@@ -42,9 +42,9 @@ export default {
     }
   },
   computed: {
-      key() {
-        return this.$route.path
-      }
+    key () {
+      return this.$route.path
+    }
   },
   methods: {
   }
@@ -77,24 +77,25 @@ export default {
       }
 
     }
-  //  .el-container /deep/ .el-header{
-  //     background-color:#001529;
-  //   }
+   .el-container /deep/ .el-header{
+      background-color:#001529;
+    }
 
-    //    @{deep} .el-aside{
-    //       width: 238px;
-    //        text-align: left;
+       @{deep} .el-aside{
+          width: 238px;
+           text-align: left;
 
-    // .el-container /deep/ .el-main{
-    //   background-color: #f2f2f2;
-    // }
+    .el-container /deep/ .el-main{
+      background-color: #f2f2f2;
+    }
 
-    // .el-container /deep/ .el-main{
-    //       padding: 0;
-    // }
+    .el-container /deep/ .el-main{
+          padding: 0;
+    }
 
-    // .el-main /deep/ .el-pagination{
-    //     text-align: center;
-    // }
+    .el-main /deep/ .el-pagination{
+        text-align: center;
+    }
+       }
 
 </style>

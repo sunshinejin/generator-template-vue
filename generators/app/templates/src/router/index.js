@@ -19,10 +19,12 @@ router.beforeEach((to, from, next) => {
   }
   NProgress.start() // start progress bar
 
+  console.log('store.state', store.state)
   // 已登录且要跳转的页面是登录页
-  if (store.state.user.token) {
+  if (store.state.user.accessToken) {
     // // 校验token是否失效
-    // store.dispatch('VerifyToken', {token: store.state.user.token})
+
+    store.dispatch('VerifyToken', {accessToken: store.state.user.accessToken})
 
     if (to.path === '/login') {
       next({ path: '/' })
