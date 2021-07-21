@@ -1,6 +1,6 @@
 {
   "name": "generator-template-vue",
-  "version": "2.0.0",
+  "version": "2.1.0",
   "main": "index.js",
   "repository": "https://github.com/sunshinejin/generator-template-vue.git",
   "author": "qinjinfang <2452559349@qq.com>",
