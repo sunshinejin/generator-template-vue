@@ -1,11 +1,11 @@
 {
-  "name": "generator-qjf-vue",
+  "name": "generator-template-vue",
   "version": "1.0.0",
   "main": "index.js",
+  "repository": "https://github.com/sunshinejin/generator-template-vue.git",
+  "author": "qinjinfang <2452559349@qq.com>",
   "license": "MIT",
   "dependencies": {
-    "generator-sun-vue": "^1.0.0",
-    "global": "^4.4.0",
     "yeoman-generator": "^5.4.0"
   }
 }
