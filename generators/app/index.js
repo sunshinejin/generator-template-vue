@@ -24,7 +24,6 @@ module.exports = class extends Generator {
       '.eslintignore',
       '.editorconfig',
       '.eslintrc.js',
-      '.gitignore',
       '.postcssrc.js',
       'package.json',
       'package-lock.json',
